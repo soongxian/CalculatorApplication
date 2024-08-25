@@ -1,0 +1,84 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Calculation Result";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .result-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .result-content {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+            .result-content strong {
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1><strong>Calculator Results</strong></h1>
+        </div>
+
+        <div class="result-section">
+            @if (Model.PlusResult != null)
+            {
+                <div class="result-title">
+                    <h2><strong>@Model.PlusResult.ID Operation</strong></h2>
+                </div>
+                <div class="result-content">
+                    <p><strong>Values:</strong> @string.Join(", ", Model.PlusResult.Values)</p>
+                    <p><strong>Result:</strong> @Model.PlusResult.Result</p>
+                    <p><strong>Mathematical Equation:</strong> @string.Join(" + ", Model.PlusResult.Values) = @Model.PlusResult.Result</p>
+                </div>
+            }
+            else
+            {
+                <p>No Plus Operation result found.</p>
+            }
+        </div>
+
+        <div class="result-section">
+            @if (Model.MultiplicationResult != null)
+            {
+                <div class="result-title">
+                    <h2><strong>@Model.MultiplicationResult.ID Operation</strong></h2>
+                </div>
+                <div class="result-content">
+                    <p><strong>Values:</strong> @string.Join(", ", Model.MultiplicationResult.Values)</p>
+                    <p><strong>Result:</strong> @Model.MultiplicationResult.Result</p>
+                    <p><strong>Mathematical Equation:</strong> @string.Join(" * ", Model.MultiplicationResult.Values) = @Model.MultiplicationResult.Result</p>
+                </div>
+            }
+            else
+            {
+                <p>No Multiplication Operation result found.</p>
+            }
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
