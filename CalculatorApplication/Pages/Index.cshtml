@@ -1,7 +1,28 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Calculation Result";
+    ViewData["Title"] = "Calculation Question";
+
+    // Prepare Plus Operation options
+    var plusCorrectAnswer = Model.PlusResult?.Result ?? 0;
+    var plusOptions = new List<int>
+    {
+        plusCorrectAnswer,
+        plusCorrectAnswer - 10,
+        plusCorrectAnswer + 10
+    };
+    var random = new Random();
+    plusOptions = plusOptions.OrderBy(x => random.Next()).ToList();
+
+    // Prepare Multiplication Operation options
+    var multiplicationCorrectAnswer = Model.MultiplicationResult?.Result ?? 0;
+    var multiplicationOptions = new List<int>
+    {
+        multiplicationCorrectAnswer,
+        multiplicationCorrectAnswer - 10,
+        multiplicationCorrectAnswer + 10
+    };
+    multiplicationOptions = multiplicationOptions.OrderBy(x => random.Next()).ToList();
 }
 
 <!DOCTYPE html>
@@ -11,74 +32,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .result-section {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background-color: #f9f9f9;
-        }
-
-        .result-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .result-content {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-            .result-content strong {
-                font-weight: bold;
-            }
-    </style>
+    <link rel="stylesheet" href="~/css/index.css">
 </head>
 <body>
     <div class="container mt-4">
         <div class="text-center mb-4">
-            <h1><strong>Calculator Results</strong></h1>
+            <h1><strong>Calculator Question</strong></h1>
         </div>
 
-        <div class="result-section">
-            @if (Model.PlusResult != null)
-            {
-                <div class="result-title">
-                    <h2><strong>@Model.PlusResult.ID Operation</strong></h2>
-                </div>
-                <div class="result-content">
-                    <p><strong>Values:</strong> @string.Join(", ", Model.PlusResult.Values)</p>
-                    <p><strong>Result:</strong> @Model.PlusResult.Result</p>
-                    <p><strong>Mathematical Equation:</strong> @string.Join(" + ", Model.PlusResult.Values) = @Model.PlusResult.Result</p>
-                </div>
-            }
-            else
-            {
-                <p>No Plus Operation result found.</p>
-            }
-        </div>
+        <div class="row">
+            <!-- Plus Operation Section -->
+            <div class="col-md-6">
+                <div class="result-section">
+                    @if (Model.PlusResult != null)
+                    {
+                        <div class="result-title">
+                            <h2><strong>@Model.PlusResult.ID Operation</strong></h2>
+                        </div>
+                        <div class="result-content">
+                            <p><strong>Question:</strong> What is @string.Join(" + ", Model.PlusResult.Values) ?</p>
+                        </div>
 
-        <div class="result-section">
-            @if (Model.MultiplicationResult != null)
-            {
-                <div class="result-title">
-                    <h2><strong>@Model.MultiplicationResult.ID Operation</strong></h2>
+                        <!-- Multiple Choice Answers -->
+                        <div class="options-container">
+                            @for (int i = 0; i < plusOptions.Count; i++)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="plusAnswer" value="@plusOptions[i]" id="plus-option-@i">
+                                    <label class="form-check-label" for="plus-option-@i">
+                                        @plusOptions[i]
+                                    </label>
+                                </div>
+                            }
+                            <div class="feedback" id="plus-feedback"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No Plus Operation result found.</p>
+                    }
                 </div>
-                <div class="result-content">
-                    <p><strong>Values:</strong> @string.Join(", ", Model.MultiplicationResult.Values)</p>
-                    <p><strong>Result:</strong> @Model.MultiplicationResult.Result</p>
-                    <p><strong>Mathematical Equation:</strong> @string.Join(" * ", Model.MultiplicationResult.Values) = @Model.MultiplicationResult.Result</p>
+            </div>
+
+            <!-- Multiplication Operation Section -->
+            <div class="col-md-6">
+                <div class="result-section">
+                    @if (Model.MultiplicationResult != null)
+                    {
+                        <div class="result-title">
+                            <h2><strong>@Model.MultiplicationResult.ID Operation</strong></h2>
+                        </div>
+                        <div class="result-content">
+                            <p><strong>Question:</strong> What is @string.Join(" * ", Model.MultiplicationResult.Values) ?</p>
+                        </div>
+
+                        <!-- Multiple Choice Answers -->
+                        <div class="options-container">
+                            @for (int i = 0; i < multiplicationOptions.Count; i++)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="multiplicationAnswer" value="@multiplicationOptions[i]" id="multiplication-option-@i">
+                                    <label class="form-check-label" for="multiplication-option-@i">
+                                        @multiplicationOptions[i]
+                                    </label>
+                                </div>
+                            }
+                            <div class="feedback" id="multiplication-feedback"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No Multiplication Operation result found.</p>
+                    }
                 </div>
-            }
-            else
-            {
-                <p>No Multiplication Operation result found.</p>
-            }
+            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function handleFeedback(name, correctAnswer, feedbackId) {
+            document.querySelectorAll(`input[name="${name}"]`).forEach((element) => {
+                element.addEventListener('change', () => {
+                    const feedback = document.querySelector(`#${feedbackId}`);
+                    if (element.value === correctAnswer.toString()) {
+                        feedback.textContent = 'Correct!';
+                        feedback.className = 'feedback correct';
+                    } else {
+                        feedback.textContent = 'Incorrect, please try again!';
+                        feedback.className = 'feedback incorrect';
+                    }
+                    feedback.style.display = 'flex';
+                });
+            });
+        }
+
+        handleFeedback('plusAnswer', '@plusCorrectAnswer', 'plus-feedback');
+        handleFeedback('multiplicationAnswer', '@multiplicationCorrectAnswer', 'multiplication-feedback');
+    </script>
 </body>
 </html>
