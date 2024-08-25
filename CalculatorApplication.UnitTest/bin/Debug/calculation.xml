@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Maths>
+    <Operation ID="Plus">
+        <Value>2</Value>
+        <Value>3</Value>
+    </Operation>
+    <Operation ID="Multiplication">
+        <Value>4</Value>
+        <Value>5</Value>
+    </Operation>
+</Maths>
